@@ -195,8 +195,12 @@ public class Agent {
     completedParallelAnalogyPairs.add(Arrays.asList(27, 28));
 
     // Get final transforms
-    Map.Entry<Integer, Pair<String, Double>> finalBinaryTransform = binaryTransformationInduction(completedAnalogyTriplets, images);
-    Map.Entry<Integer, Pair<String, Double>> finalUnaryTransform = unaryTransformationInduction(completedAnalogyPairs, images);
+    Map.Entry<Integer, Pair<String, Double>> finalBinaryTransform = binaryTransformationInduction(
+        completedAnalogyTriplets, completedParallelAnalogyTriplets, images
+    );
+    Map.Entry<Integer, Pair<String, Double>> finalUnaryTransform = unaryTransformationInduction(
+        completedAnalogyPairs, completedParallelAnalogyPairs, images
+    );
 
     if(finalBinaryTransform.getValue().getElement1() > finalUnaryTransform.getValue().getElement1())
       return Integer.valueOf(
@@ -210,8 +214,10 @@ public class Agent {
 
   public Map.Entry<Integer, Pair<String, Double>> binaryTransformationInduction(
       Map<Integer, List<String>> completedAnalogyTriplets,
+      List<List<Integer>> completedParallelAnalogyTriplets,
       Map<String, BufferedImage> images) {
-    Map<Integer, Pair<String, Double>> tripletAnalogyTransforms = new HashMap<>();
+    Map<Integer, Pair<String, Double>> bestAnalogyTransforms = new HashMap<>();
+    Map<Integer, Map<String, Double>> analogyTransforms = new HashMap<>();
 
     for (Map.Entry<Integer, List<String>> entry : completedAnalogyTriplets.entrySet()) {
       BufferedImage image1 = images.get(entry.getValue().get(0));
@@ -242,13 +248,46 @@ public class Agent {
         }
       }
 
-      // Assign transform to analogy
-      tripletAnalogyTransforms.put(entry.getKey(), new Pair<>(bestTransform.getKey(), bestTransform.getValue()));
+      // Assign best transform to analogy
+      bestAnalogyTransforms.put(entry.getKey(), new Pair<>(bestTransform.getKey(), bestTransform.getValue()));
+      // Store other transform values for analogy
+      analogyTransforms.put(entry.getKey(), transformations);
     }
 
-    // Select the best fit transform across triplet analogies
+    Map<Integer, Pair<String, Double>> candidateTransforms = new HashMap<>();
+    // Get best transformation across each parallel analogy
+    for (List<Integer> parallelAnalogies : completedParallelAnalogyTriplets) {
+      Map<Integer, Pair<String, Double>> bestParallelAnalogyTransforms = new HashMap<>();
+
+      for (Integer analogy : parallelAnalogies) {
+        // Get average performance of the analogy's best transformation across parallel analogies
+        double sum = bestAnalogyTransforms.get(analogy).getElement1();
+
+        for (Integer otherAnalogy : parallelAnalogies) {
+          if (analogy != otherAnalogy) {
+            sum += analogyTransforms.get(otherAnalogy).get(bestAnalogyTransforms.get(analogy).getElement0());
+          }
+        }
+
+        double mean = sum / parallelAnalogies.size();
+        bestParallelAnalogyTransforms.put(analogy, new Pair<>(bestAnalogyTransforms.get(analogy).getElement0(), mean));
+      }
+
+      // Find best performing transform across the parallel analogy
+      Map.Entry<Integer, Pair<String, Double>> candidateTransform = null;
+      for (Map.Entry<Integer, Pair<String, Double>> transform : bestParallelAnalogyTransforms.entrySet()) {
+        if (candidateTransform == null || candidateTransform.getValue().getElement1() < transform.getValue().getElement1()) {
+          candidateTransform = transform;
+        }
+      }
+
+      // Store the candidate
+      candidateTransforms.put(candidateTransform.getKey(), candidateTransform.getValue());
+    }
+
+    // Choose the best candidate transform
     Map.Entry<Integer, Pair<String, Double>> finalTransform = null;
-    for (Map.Entry<Integer, Pair<String, Double>> transform : tripletAnalogyTransforms.entrySet()) {
+    for (Map.Entry<Integer, Pair<String, Double>> transform : candidateTransforms.entrySet()) {
       if (finalTransform == null || finalTransform.getValue().getElement1() < transform.getValue().getElement1()) {
         finalTransform = transform;
       }
@@ -259,8 +298,10 @@ public class Agent {
 
   public Map.Entry<Integer, Pair<String, Double>> unaryTransformationInduction(
       Map<Integer, Pair<String, String>> completedAnalogyPairs,
+      List<List<Integer>> completedParallelAnalogyPairs,
       Map<String, BufferedImage> images) {
-    Map<Integer, Pair<String, Double>> pairAnalogyTransforms = new HashMap<>();
+    Map<Integer, Pair<String, Double>> bestAnalogyTransforms = new HashMap<>();
+    Map<Integer, Map<String, Double>> analogyTransforms = new HashMap<>();
 
     for (Map.Entry<Integer, Pair<String, String>> entry : completedAnalogyPairs.entrySet()) {
       BufferedImage image1 = images.get(entry.getValue().getElement0());
@@ -303,13 +344,46 @@ public class Agent {
         }
       }
 
-      // Assign transform to analogy
-      pairAnalogyTransforms.put(entry.getKey(), new Pair<>(bestTransform.getKey(), bestTransform.getValue()));
+      // Assign best transform to analogy
+      bestAnalogyTransforms.put(entry.getKey(), new Pair<>(bestTransform.getKey(), bestTransform.getValue()));
+      // Store other transform values for analogy
+      analogyTransforms.put(entry.getKey(), transformations);
     }
 
-    // Select the best fit transform across pair analogies
+    Map<Integer, Pair<String, Double>> candidateTransforms = new HashMap<>();
+    // Get best transformation across each parallel analogy
+    for (List<Integer> parallelAnalogies : completedParallelAnalogyPairs) {
+      Map<Integer, Pair<String, Double>> bestParallelAnalogyTransforms = new HashMap<>();
+
+      for (Integer analogy : parallelAnalogies) {
+        // Get average performance of the analogy's best transformation across parallel analogies
+        double sum = bestAnalogyTransforms.get(analogy).getElement1();
+
+        for (Integer otherAnalogy : parallelAnalogies) {
+          if (analogy != otherAnalogy) {
+            sum += analogyTransforms.get(otherAnalogy).get(bestAnalogyTransforms.get(analogy).getElement0());
+          }
+        }
+
+        double mean = sum / parallelAnalogies.size();
+        bestParallelAnalogyTransforms.put(analogy, new Pair<>(bestAnalogyTransforms.get(analogy).getElement0(), mean));
+      }
+
+      // Find best performing transform across the parallel analogy
+      Map.Entry<Integer, Pair<String, Double>> candidateTransform = null;
+      for (Map.Entry<Integer, Pair<String, Double>> transform : bestParallelAnalogyTransforms.entrySet()) {
+        if (candidateTransform == null || candidateTransform.getValue().getElement1() < transform.getValue().getElement1()) {
+          candidateTransform = transform;
+        }
+      }
+
+      // Store the candidate
+      candidateTransforms.put(candidateTransform.getKey(), candidateTransform.getValue());
+    }
+
+    // Choose the best candidate transform
     Map.Entry<Integer, Pair<String, Double>> finalTransform = null;
-    for (Map.Entry<Integer, Pair<String, Double>> transform : pairAnalogyTransforms.entrySet()) {
+    for (Map.Entry<Integer, Pair<String, Double>> transform : candidateTransforms.entrySet()) {
       if (finalTransform == null || finalTransform.getValue().getElement1() < transform.getValue().getElement1()) {
         finalTransform = transform;
       }
@@ -553,8 +627,8 @@ public class Agent {
   public int[][] backSubtractTransform(int[][] matrix1, int[][] matrix2) {
     int[][] resultPixelArray = new int[matrix1.length][matrix1.length];
 
-    for (int i = 0; i < matrix2.length; i++) {
-      for (int j = 0; j < matrix2[i].length; j++) {
+    for (int i = 0; i < matrix1.length; i++) {
+      for (int j = 0; j < matrix1[i].length; j++) {
         resultPixelArray[i][j] = matrix2[i][j] - matrix1[i][j];
       }
     }
@@ -593,7 +667,7 @@ public class Agent {
 
     for (int i = 0; i < matrix1.length; i++) {
       for (int j = 0; j < matrix1[i].length; j++) {
-        if (matrix1[i][j] != 255 || matrix2[i][j] != 255)
+        if (matrix1[i][j] == 0 || matrix2[i][j] == 0)
           count++;
       }
     }
@@ -606,7 +680,7 @@ public class Agent {
 
     for (int i = 0; i < matrix1.length; i++) {
       for (int j = 0; j < matrix1[i].length; j++) {
-        if (matrix1[i][j] != 255 && matrix1[i][j] == matrix2[i][j])
+        if (matrix1[i][j] == 0 && matrix2[i][j] == 0)
           count++;
       }
     }
@@ -619,7 +693,7 @@ public class Agent {
 
     for (int i = 0; i < matrix1.length; i++) {
       for (int j = 0; j < matrix1[i].length; j++) {
-        if (matrix1[i][j] != 255 && matrix1[i][j] != matrix2[i][j])
+        if (matrix1[i][j] == 0 && matrix2[i][j] == 255)
           count++;
       }
     }
