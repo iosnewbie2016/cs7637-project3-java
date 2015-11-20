@@ -7,6 +7,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -71,6 +72,7 @@ public class Agent {
   }
 
   public int initialization(RavensProblem problem) {
+    System.out.println(problem.getName());
     Map<String, BufferedImage> images = new HashMap<>();
     Map<String, BufferedImage> answerImages = new HashMap<>();
 
@@ -94,33 +96,47 @@ public class Agent {
         answerImages.put(figure.getKey(), convertToGrayscale(openImage(problem.getFigures().get(figure.getKey()).getVisual())));
     }
 
-    // Define completed analogies
+    // Define completed analogy triplets
+
+    // Rows
     completedAnalogyTriplets.put(1, Arrays.asList("A", "B", "C"));
     completedAnalogyTriplets.put(2, Arrays.asList("D", "E", "F"));
+    // Columns
     completedAnalogyTriplets.put(3, Arrays.asList("A", "D", "G"));
     completedAnalogyTriplets.put(4, Arrays.asList("B", "E", "H"));
+    // Diagonals
     completedAnalogyTriplets.put(5, Arrays.asList("F", "G", "B"));
     completedAnalogyTriplets.put(6, Arrays.asList("H", "C", "D"));
     completedAnalogyTriplets.put(7, Arrays.asList("F", "H", "A"));
     completedAnalogyTriplets.put(8, Arrays.asList("G", "C", "E"));
 
     // Define parallel partial analogies
+
+    // Rows
     partialAnalogyTriplets.put(1, Arrays.asList("G", "H", "?"));
     partialAnalogyTriplets.put(2, Arrays.asList("G", "H", "?"));
+    // Columns
     partialAnalogyTriplets.put(3, Arrays.asList("C", "F", "?"));
     partialAnalogyTriplets.put(4, Arrays.asList("C", "F", "?"));
+    // Diagonals
     partialAnalogyTriplets.put(5, Arrays.asList("A", "E", "?"));
     partialAnalogyTriplets.put(6, Arrays.asList("A", "E", "?"));
     partialAnalogyTriplets.put(7, Arrays.asList("B", "D", "?"));
     partialAnalogyTriplets.put(8, Arrays.asList("B", "D", "?"));
 
     // Define completed parallel analogies
+
+    // Rows
     completedParallelAnalogyTriplets.add(Arrays.asList(1, 2));
+    // Columns
     completedParallelAnalogyTriplets.add(Arrays.asList(3, 4));
+    // Diagonals
     completedParallelAnalogyTriplets.add(Arrays.asList(5, 6));
     completedParallelAnalogyTriplets.add(Arrays.asList(7, 8));
 
     // Define completed analogy pairs
+
+    // Rows
     completedAnalogyPairs.put(1, new Pair<>("A", "B"));
     completedAnalogyPairs.put(2, new Pair<>("B", "C"));
     completedAnalogyPairs.put(3, new Pair<>("D", "E"));
@@ -128,6 +144,7 @@ public class Agent {
     completedAnalogyPairs.put(5, new Pair<>("G", "H"));
     completedAnalogyPairs.put(6, new Pair<>("A", "C"));
     completedAnalogyPairs.put(7, new Pair<>("D", "F"));
+    // Columns
     completedAnalogyPairs.put(8, new Pair<>("A", "D"));
     completedAnalogyPairs.put(9, new Pair<>("D", "G"));
     completedAnalogyPairs.put(10, new Pair<>("B", "E"));
@@ -135,6 +152,7 @@ public class Agent {
     completedAnalogyPairs.put(12, new Pair<>("C", "F"));
     completedAnalogyPairs.put(13, new Pair<>("A", "G"));
     completedAnalogyPairs.put(14, new Pair<>("B", "H"));
+    // Diagonals
     completedAnalogyPairs.put(15, new Pair<>("F", "G"));
     completedAnalogyPairs.put(16, new Pair<>("G", "B"));
     completedAnalogyPairs.put(17, new Pair<>("H", "C"));
@@ -151,6 +169,8 @@ public class Agent {
     completedAnalogyPairs.put(28, new Pair<>("G", "E"));
 
     // Define parallel partial analogy pairs
+
+    // Rows
     partialAnalogyPairs.put(1, new Pair<>("H", "?"));
     partialAnalogyPairs.put(2, new Pair<>("H", "?"));
     partialAnalogyPairs.put(3, new Pair<>("H", "?"));
@@ -158,6 +178,7 @@ public class Agent {
     partialAnalogyPairs.put(5, new Pair<>("H", "?"));
     partialAnalogyPairs.put(6, new Pair<>("G", "?"));
     partialAnalogyPairs.put(7, new Pair<>("G", "?"));
+    // Columns
     partialAnalogyPairs.put(8, new Pair<>("F", "?"));
     partialAnalogyPairs.put(9, new Pair<>("F", "?"));
     partialAnalogyPairs.put(10, new Pair<>("F", "?"));
@@ -165,6 +186,7 @@ public class Agent {
     partialAnalogyPairs.put(12, new Pair<>("F", "?"));
     partialAnalogyPairs.put(13, new Pair<>("C", "?"));
     partialAnalogyPairs.put(14, new Pair<>("C", "?"));
+    // Diagonals
     partialAnalogyPairs.put(15, new Pair<>("E", "?"));
     partialAnalogyPairs.put(16, new Pair<>("E", "?"));
     partialAnalogyPairs.put(17, new Pair<>("E", "?"));
@@ -181,12 +203,16 @@ public class Agent {
     partialAnalogyPairs.put(28, new Pair<>("B", "?"));
 
     // Define completed parallel analogy pairs
+
+    // Rows
     completedParallelAnalogyPairs.add(Arrays.asList(1, 3, 5));
     completedParallelAnalogyPairs.add(Arrays.asList(2, 4));
     completedParallelAnalogyPairs.add(Arrays.asList(6, 7));
+    // Columns
     completedParallelAnalogyPairs.add(Arrays.asList(8, 10, 12));
     completedParallelAnalogyPairs.add(Arrays.asList(9, 11));
     completedParallelAnalogyPairs.add(Arrays.asList(13, 14));
+    // Diagonals
     completedParallelAnalogyPairs.add(Arrays.asList(15, 17, 19));
     completedParallelAnalogyPairs.add(Arrays.asList(16, 18));
     completedParallelAnalogyPairs.add(Arrays.asList(20, 21));
@@ -195,29 +221,31 @@ public class Agent {
     completedParallelAnalogyPairs.add(Arrays.asList(27, 28));
 
     // Get final transforms
-    Map.Entry<Integer, Pair<String, Double>> finalBinaryTransform = binaryTransformationInduction(
-        completedAnalogyTriplets, completedParallelAnalogyTriplets, images
-    );
-    Map.Entry<Integer, Pair<String, Double>> finalUnaryTransform = unaryTransformationInduction(
-        completedAnalogyPairs, completedParallelAnalogyPairs, images
+    Map.Entry<Integer, Pair<String, Double>> finalBinaryTransform = binaryTransformationInduction(completedAnalogyTriplets, images);
+    //SimiltudeTransform finalUnaryTransform = unaryTransformationInduction(completedAnalogyPairs, images);
+
+//    if(finalBinaryTransform.getValue().getElement1() > finalUnaryTransform.getValue().getElement1())
+//      return Integer.valueOf(
+//          binaryAnswerSelection(partialAnalogyTriplets, finalBinaryTransform, images, answerImages).getKey()
+//      );
+//    else
+//      return Integer.valueOf(
+//          unaryAnswerSelection(partialAnalogyPairs, finalUnaryTransform, images, answerImages).getKey()
+//      );
+
+    int answer = Integer.valueOf(
+        binaryAnswerSelection(partialAnalogyTriplets, finalBinaryTransform, images, answerImages).getKey()
     );
 
-    if(finalBinaryTransform.getValue().getElement1() > finalUnaryTransform.getValue().getElement1())
-      return Integer.valueOf(
-          binaryAnswerSelection(partialAnalogyTriplets, finalBinaryTransform, images, answerImages).getKey()
-      );
-    else
-      return Integer.valueOf(
-          unaryAnswerSelection(partialAnalogyPairs, finalUnaryTransform, images, answerImages).getKey()
-      );
+    System.out.println(answer);
+
+    return answer;
   }
 
   public Map.Entry<Integer, Pair<String, Double>> binaryTransformationInduction(
       Map<Integer, List<String>> completedAnalogyTriplets,
-      List<List<Integer>> completedParallelAnalogyTriplets,
       Map<String, BufferedImage> images) {
     Map<Integer, Pair<String, Double>> bestAnalogyTransforms = new HashMap<>();
-    Map<Integer, Map<String, Double>> analogyTransforms = new HashMap<>();
 
     for (Map.Entry<Integer, List<String>> entry : completedAnalogyTriplets.entrySet()) {
       BufferedImage image1 = images.get(entry.getValue().get(0));
@@ -230,15 +258,15 @@ public class Agent {
 
       /* Binary transformations */
       // Union
-      transformations.put("union", calculateTverskyRatio(pixelMatrix3, unionTransform(pixelMatrix1, pixelMatrix2)));
+      transformations.put("union", calculateTverskyRatio2(pixelMatrix3, unionTransform(pixelMatrix1, pixelMatrix2)));
       // Intersection
-      transformations.put("intersect", calculateTverskyRatio(pixelMatrix3, intersectTransform(pixelMatrix1, pixelMatrix2)));
+      transformations.put("intersect", calculateTverskyRatio2(pixelMatrix3, intersectTransform(pixelMatrix1, pixelMatrix2)));
       // Subtraction
-      transformations.put("subtract", calculateTverskyRatio(pixelMatrix3, subtractTransform(pixelMatrix1, pixelMatrix2)));
+      transformations.put("subtract", calculateTverskyRatio2(pixelMatrix3, subtractTransform(pixelMatrix1, pixelMatrix2)));
       // Back-subtraction
-      transformations.put("backSubtract", calculateTverskyRatio(pixelMatrix3, backSubtractTransform(pixelMatrix1, pixelMatrix2)));
+      transformations.put("backSubtract", calculateTverskyRatio2(pixelMatrix3, backSubtractTransform(pixelMatrix1, pixelMatrix2)));
       // Exclusive-or
-      transformations.put("exclusiveOr", calculateTverskyRatio(pixelMatrix3, exclusiveOrTransform(pixelMatrix1, pixelMatrix2)));
+      transformations.put("exclusiveOr", calculateTverskyRatio2(pixelMatrix3, exclusiveOrTransform(pixelMatrix1, pixelMatrix2)));
 
       // Select the best fit transform by highest similarity
       Map.Entry<String, Double> bestTransform = null;
@@ -250,44 +278,11 @@ public class Agent {
 
       // Assign best transform to analogy
       bestAnalogyTransforms.put(entry.getKey(), new Pair<>(bestTransform.getKey(), bestTransform.getValue()));
-      // Store other transform values for analogy
-      analogyTransforms.put(entry.getKey(), transformations);
-    }
-
-    Map<Integer, Pair<String, Double>> candidateTransforms = new HashMap<>();
-    // Get best transformation across each parallel analogy
-    for (List<Integer> parallelAnalogies : completedParallelAnalogyTriplets) {
-      Map<Integer, Pair<String, Double>> bestParallelAnalogyTransforms = new HashMap<>();
-
-      for (Integer analogy : parallelAnalogies) {
-        // Get average performance of the analogy's best transformation across parallel analogies
-        double sum = bestAnalogyTransforms.get(analogy).getElement1();
-
-        for (Integer otherAnalogy : parallelAnalogies) {
-          if (analogy != otherAnalogy) {
-            sum += analogyTransforms.get(otherAnalogy).get(bestAnalogyTransforms.get(analogy).getElement0());
-          }
-        }
-
-        double mean = sum / parallelAnalogies.size();
-        bestParallelAnalogyTransforms.put(analogy, new Pair<>(bestAnalogyTransforms.get(analogy).getElement0(), mean));
-      }
-
-      // Find best performing transform across the parallel analogy
-      Map.Entry<Integer, Pair<String, Double>> candidateTransform = null;
-      for (Map.Entry<Integer, Pair<String, Double>> transform : bestParallelAnalogyTransforms.entrySet()) {
-        if (candidateTransform == null || candidateTransform.getValue().getElement1() < transform.getValue().getElement1()) {
-          candidateTransform = transform;
-        }
-      }
-
-      // Store the candidate
-      candidateTransforms.put(candidateTransform.getKey(), candidateTransform.getValue());
     }
 
     // Choose the best candidate transform
     Map.Entry<Integer, Pair<String, Double>> finalTransform = null;
-    for (Map.Entry<Integer, Pair<String, Double>> transform : candidateTransforms.entrySet()) {
+    for (Map.Entry<Integer, Pair<String, Double>> transform : bestAnalogyTransforms.entrySet()) {
       if (finalTransform == null || finalTransform.getValue().getElement1() < transform.getValue().getElement1()) {
         finalTransform = transform;
       }
@@ -296,12 +291,10 @@ public class Agent {
     return finalTransform;
   }
 
-  public Map.Entry<Integer, Pair<String, Double>> unaryTransformationInduction(
+  public SimiltudeTransform unaryTransformationInduction(
       Map<Integer, Pair<String, String>> completedAnalogyPairs,
-      List<List<Integer>> completedParallelAnalogyPairs,
       Map<String, BufferedImage> images) {
-    Map<Integer, Pair<String, Double>> bestAnalogyTransforms = new HashMap<>();
-    Map<Integer, Map<String, Double>> analogyTransforms = new HashMap<>();
+    Map<Integer, Tuple<String, Double, Pair<Integer, Integer>>> bestAnalogyTransforms = new HashMap<>();
 
     for (Map.Entry<Integer, Pair<String, String>> entry : completedAnalogyPairs.entrySet()) {
       BufferedImage image1 = images.get(entry.getValue().getElement0());
@@ -309,87 +302,153 @@ public class Agent {
       BufferedImage transformedImage;
       int[][] pixelMatrix1 = getGrayscalePixelMatrix(image1);
       int[][] pixelMatrix2 = getGrayscalePixelMatrix(image2);
-      Map<String, Double> transformations = new HashMap<>();
+      List<Tuple<String, Double, Pair<Integer, Integer>>> transformations = new ArrayList<>();
+      Pair<Double, Pair<Integer, Integer>> tverskyTranslationPair;
 
       /* Unary transformations */
       // Identity
-      transformations.put("identity", calculateTverskyRatio(pixelMatrix2, pixelMatrix1));
+      // Find best translation for transform
+      tverskyTranslationPair = getBestTranslation(image1, pixelMatrix2);
+      transformations.add(new Tuple<>(
+          "identity",
+          tverskyTranslationPair.getElement0(),
+          tverskyTranslationPair.getElement1()
+      ));
+
       // Rotate 90
       transformedImage = rotateImage(image1, Math.PI / 2);
-      transformations.put("rotate90", calculateTverskyRatio(pixelMatrix2, getGrayscalePixelMatrix(transformedImage)));
+      // Find best translation for transform
+      tverskyTranslationPair = getBestTranslation(transformedImage, pixelMatrix2);
+      transformations.add(new Tuple<>(
+          "rotate90",
+          tverskyTranslationPair.getElement0(),
+          tverskyTranslationPair.getElement1()
+      ));
+
       // Rotate 180
       transformedImage = rotateImage(image1, Math.PI);
-      transformations.put("rotate180", calculateTverskyRatio(pixelMatrix2, getGrayscalePixelMatrix(transformedImage)));
+      // Find best translation for transform
+      tverskyTranslationPair = getBestTranslation(transformedImage, pixelMatrix2);
+      transformations.add(new Tuple<>(
+          "rotate180",
+          tverskyTranslationPair.getElement0(),
+          tverskyTranslationPair.getElement1()
+      ));
+
       // Rotate 270
       transformedImage = rotateImage(image1, 3 * Math.PI / 2);
-      transformations.put("rotate270", calculateTverskyRatio(pixelMatrix2, getGrayscalePixelMatrix(transformedImage)));
+      // Find best translation for transform
+      tverskyTranslationPair = getBestTranslation(transformedImage, pixelMatrix2);
+      transformations.add(new Tuple<>(
+          "rotate270",
+          tverskyTranslationPair.getElement0(),
+          tverskyTranslationPair.getElement1()
+      ));
+
       // Identity flip
       transformedImage = verticalFlip(image1);
-      transformations.put("identityFlip", calculateTverskyRatio(pixelMatrix2, getGrayscalePixelMatrix(transformedImage)));
+      // Find best translation for transform
+      tverskyTranslationPair = getBestTranslation(transformedImage, pixelMatrix2);
+      transformations.add(new Tuple<>(
+          "identityFlip",
+          tverskyTranslationPair.getElement0(),
+          tverskyTranslationPair.getElement1()
+      ));
+
       // Rotate 90 flip
       transformedImage = rotate90Flip(image1);
-      transformations.put("rotate90Flip", calculateTverskyRatio(pixelMatrix2, getGrayscalePixelMatrix(transformedImage)));
+      // Find best translation for transform
+      tverskyTranslationPair = getBestTranslation(transformedImage, pixelMatrix2);
+      transformations.add(new Tuple<>(
+          "rotate90Flip",
+          tverskyTranslationPair.getElement0(),
+          tverskyTranslationPair.getElement1()
+      ));
+
       // Rotate 180 flip
       transformedImage = horizontalFlip(image1);
-      transformations.put("rotate180Flip", calculateTverskyRatio(pixelMatrix2, getGrayscalePixelMatrix(transformedImage)));
+      // Find best translation for transform
+      tverskyTranslationPair = getBestTranslation(transformedImage, pixelMatrix2);
+      transformations.add(new Tuple<>(
+          "rotate180Flip",
+          tverskyTranslationPair.getElement0(),
+          tverskyTranslationPair.getElement1()
+      ));
+
       // Rotate 270 flip
       transformedImage = rotate270Flip(image1);
-      transformations.put("rotate270Flip", calculateTverskyRatio(pixelMatrix2, getGrayscalePixelMatrix(transformedImage)));
+      // Find best translation for transform
+      tverskyTranslationPair = getBestTranslation(transformedImage, pixelMatrix2);
+      transformations.add(new Tuple<>(
+          "rotate270Flip",
+          tverskyTranslationPair.getElement0(),
+          tverskyTranslationPair.getElement1()
+      ));
 
       // Select the best fit transform by highest similarity
-      Map.Entry<String, Double> bestTransform = null;
-      for (Map.Entry<String, Double> transform : transformations.entrySet()) {
-        if (bestTransform == null || bestTransform.getValue() < transform.getValue()) {
+      Tuple<String, Double, Pair<Integer, Integer>> bestTransform = null;
+      for (Tuple<String, Double, Pair<Integer, Integer>> transform : transformations) {
+        if (bestTransform == null || bestTransform.getElement1() < transform.getElement1()) {
           bestTransform = transform;
         }
       }
 
       // Assign best transform to analogy
-      bestAnalogyTransforms.put(entry.getKey(), new Pair<>(bestTransform.getKey(), bestTransform.getValue()));
-      // Store other transform values for analogy
-      analogyTransforms.put(entry.getKey(), transformations);
-    }
-
-    Map<Integer, Pair<String, Double>> candidateTransforms = new HashMap<>();
-    // Get best transformation across each parallel analogy
-    for (List<Integer> parallelAnalogies : completedParallelAnalogyPairs) {
-      Map<Integer, Pair<String, Double>> bestParallelAnalogyTransforms = new HashMap<>();
-
-      for (Integer analogy : parallelAnalogies) {
-        // Get average performance of the analogy's best transformation across parallel analogies
-        double sum = bestAnalogyTransforms.get(analogy).getElement1();
-
-        for (Integer otherAnalogy : parallelAnalogies) {
-          if (analogy != otherAnalogy) {
-            sum += analogyTransforms.get(otherAnalogy).get(bestAnalogyTransforms.get(analogy).getElement0());
-          }
-        }
-
-        double mean = sum / parallelAnalogies.size();
-        bestParallelAnalogyTransforms.put(analogy, new Pair<>(bestAnalogyTransforms.get(analogy).getElement0(), mean));
-      }
-
-      // Find best performing transform across the parallel analogy
-      Map.Entry<Integer, Pair<String, Double>> candidateTransform = null;
-      for (Map.Entry<Integer, Pair<String, Double>> transform : bestParallelAnalogyTransforms.entrySet()) {
-        if (candidateTransform == null || candidateTransform.getValue().getElement1() < transform.getValue().getElement1()) {
-          candidateTransform = transform;
-        }
-      }
-
-      // Store the candidate
-      candidateTransforms.put(candidateTransform.getKey(), candidateTransform.getValue());
+      bestAnalogyTransforms.put(
+          entry.getKey(),
+          new Tuple<>(
+              bestTransform.getElement0(),
+              bestTransform.getElement1(),
+              bestTransform.getElement2()
+          )
+      );
     }
 
     // Choose the best candidate transform
-    Map.Entry<Integer, Pair<String, Double>> finalTransform = null;
-    for (Map.Entry<Integer, Pair<String, Double>> transform : candidateTransforms.entrySet()) {
+    Map.Entry<Integer, Tuple<String, Double, Pair<Integer, Integer>>> finalTransform = null;
+    for (Map.Entry<Integer, Tuple<String, Double, Pair<Integer, Integer>>> transform : bestAnalogyTransforms.entrySet()) {
       if (finalTransform == null || finalTransform.getValue().getElement1() < transform.getValue().getElement1()) {
         finalTransform = transform;
       }
     }
 
-    return finalTransform;
+    // Find image composition operand
+    int[][] pixelMatrix1 = getGrayscalePixelMatrix(images.get(completedAnalogyPairs.get(finalTransform.getKey()).getElement0()));
+    int[][] pixelMatrix2 = getGrayscalePixelMatrix(images.get(completedAnalogyPairs.get(finalTransform.getKey()).getElement1()));
+    String compositionOperand = findImageComposition(pixelMatrix1, pixelMatrix2);
+
+    // Perform composition
+    int[][] compositionResult = new int[pixelMatrix1.length][pixelMatrix1.length];
+    if(compositionOperand.equals("addition"))
+      compositionResult = differenceMatrices2(pixelMatrix2, pixelMatrix1);
+    else if(compositionOperand.equals("subtraction"))
+      compositionResult = differenceMatrices2(pixelMatrix1, pixelMatrix2);
+
+    return new SimiltudeTransform(
+        finalTransform.getKey(),
+        finalTransform.getValue().getElement0(),
+        finalTransform.getValue().getElement2(),
+        compositionOperand,
+        compositionResult
+    );
+  }
+
+  public String findImageComposition(int[][] matrix1, int[][] matrix2) {
+    Map<String, Double> compositions = new HashMap<>();
+
+    compositions.put("", calculateTverskyRatio(matrix1, matrix2, 1.0, 1.0));
+    compositions.put("addition", calculateTverskyRatio(matrix1, matrix2, 1.0, 0));
+    compositions.put("subtraction", calculateTverskyRatio(matrix1, matrix2, 0, 1.0));
+
+    // Find the best composition
+    Map.Entry<String, Double> bestComposition = null;
+    for (Map.Entry<String, Double> composition : compositions.entrySet()) {
+      if (bestComposition == null || bestComposition.getValue() < composition.getValue()) {
+        bestComposition = composition;
+      }
+    }
+
+    return bestComposition.getKey();
   }
 
   public Map.Entry<String, Double> binaryAnswerSelection(
@@ -421,7 +480,7 @@ public class Agent {
     for (Map.Entry<String, BufferedImage> entry : answerImages.entrySet()) {
       int[][] pixelMatrix3 = getGrayscalePixelMatrix(entry.getValue());
 
-      answers.put(entry.getKey(), calculateTverskyRatio(candidateMatrix, pixelMatrix3));
+      answers.put(entry.getKey(), calculateTverskyRatio2(candidateMatrix, pixelMatrix3));
     }
 
     // Select the answer with the highest similarity with candidate answer
@@ -437,38 +496,54 @@ public class Agent {
 
   public Map.Entry<String, Double> unaryAnswerSelection(
       Map<Integer, Pair<String, String>> partialAnalogyPairs,
-      Map.Entry<Integer, Pair<String, Double>> finalUnaryTransform,
+      SimiltudeTransform finalUnaryTransform,
       Map<String, BufferedImage> images,
       Map<String, BufferedImage> answerImages) {
-    String transform = finalUnaryTransform.getValue().getElement0();
-    Pair<String, String> analogyPair = partialAnalogyPairs.get(finalUnaryTransform.getKey());
+    String transform = finalUnaryTransform.getTransform();
+    Pair<String, String> analogyPair = partialAnalogyPairs.get(finalUnaryTransform.getAnalogyKey());
     BufferedImage image1 = images.get(analogyPair.getElement0());
-    int[][] pixelMatrix1 = getGrayscalePixelMatrix(image1);
-    int[][] candidateMatrix = new int[pixelMatrix1.length][pixelMatrix1.length];
+    BufferedImage candidateImage = image1;
+    int[][] candidateMatrix;
     Map<String, Double> answers = new HashMap<>();
 
     if (transform.equals("identity"))
-      candidateMatrix = pixelMatrix1;
+      candidateImage = image1;
     else if (transform.equals("rotate90"))
-      candidateMatrix = getGrayscalePixelMatrix(rotateImage(image1, Math.PI / 2));
+      candidateImage = rotateImage(image1, Math.PI / 2);
     else if (transform.equals("rotate180"))
-      candidateMatrix = getGrayscalePixelMatrix(rotateImage(image1, Math.PI));
+      candidateImage = rotateImage(image1, Math.PI);
     else if (transform.equals("rotate270"))
-      candidateMatrix = getGrayscalePixelMatrix(rotateImage(image1, 3 * Math.PI / 2));
+      candidateImage = rotateImage(image1, 3 * Math.PI / 2);
     else if (transform.equals("identityFlip"))
-      candidateMatrix = getGrayscalePixelMatrix(verticalFlip(image1));
+      candidateImage = verticalFlip(image1);
     else if (transform.equals("rotate90Flip"))
-      candidateMatrix = getGrayscalePixelMatrix(rotate90Flip(image1));
+      candidateImage = rotate90Flip(image1);
     else if (transform.equals("rotate180Flip"))
-      candidateMatrix = getGrayscalePixelMatrix(horizontalFlip(image1));
+      candidateImage = horizontalFlip(image1);
     else if (transform.equals("rotate270Flip"))
-      candidateMatrix = getGrayscalePixelMatrix(rotate270Flip(image1));
+      candidateImage = rotate270Flip(image1);
+
+    // Apply translation transform to candidate image
+    candidateImage = translateTransform(
+        candidateImage,
+        finalUnaryTransform.getTranslation().getElement0(),
+        finalUnaryTransform.getTranslation().getElement1()
+    );
+
+    // Get pixel matrix for candidate image
+    candidateMatrix = getGrayscalePixelMatrix(candidateImage);
+
+    // Apply image composition to candidate image
+    if(finalUnaryTransform.getCompositionOperand().equals("addition"))
+      candidateMatrix = imageAddition(candidateMatrix, finalUnaryTransform.getCompositionResult());
+    else if(finalUnaryTransform.getCompositionOperand().equals("subtraction"))
+      candidateMatrix = imageSubtraction(candidateMatrix, finalUnaryTransform.getCompositionResult());
 
     // Get similarity value with each answer against the binary transformation predicted answer
     for (Map.Entry<String, BufferedImage> entry : answerImages.entrySet()) {
       int[][] pixelMatrix3 = getGrayscalePixelMatrix(entry.getValue());
 
-      answers.put(entry.getKey(), calculateTverskyRatio(candidateMatrix, pixelMatrix3));
+      answers.put(entry.getKey(), calculateTverskyRatio2(candidateMatrix, pixelMatrix3));
     }
 
     // Select the answer with the highest similarity with candidate answer
@@ -480,6 +555,42 @@ public class Agent {
     }
 
     return answer;
+  }
+
+  public Pair<Double, Pair<Integer, Integer>> getBestTranslation(BufferedImage transformedImage, int[][] pixelMatrix2) {
+    // Find best translation for transform
+    double maxTversky = 0;
+    Pair<Integer, Integer> bestTranslation = new Pair<>(0, 0);
+
+    // Positive translations
+    for (int i = 0; i < 10; i++) {
+      for (int j = 0; j < 10; j++) {
+        // Translate image
+        transformedImage = translateTransform(transformedImage, i, j);
+        // Check if most similar yet
+        double tversky = calculateTverskyRatio2(pixelMatrix2, getGrayscalePixelMatrix(transformedImage));
+        if (tversky > maxTversky) {
+          maxTversky = tversky;
+          bestTranslation = new Pair<>(i, j);
+        }
+      }
+    }
+
+    // Negative translations
+    for (int i = 0; i > -10; i--) {
+      for (int j = 0; j > -10; j--) {
+        // Translate image
+        transformedImage = translateTransform(transformedImage, i, j);
+        // Check if most similar yet
+        double tversky = calculateTverskyRatio2(pixelMatrix2, getGrayscalePixelMatrix(transformedImage));
+        if (tversky > maxTversky) {
+          maxTversky = tversky;
+          bestTranslation = new Pair<>(i, j);
+        }
+      }
+    }
+
+    return new Pair<>(maxTversky, bestTranslation);
   }
 
   /**
@@ -588,6 +699,29 @@ public class Agent {
     return result;
   }
 
+  /**
+   * Translates an image to a new location.
+   *
+   * Original code:
+   * http://www.java2s.com/Tutorial/Java/0261__2D-Graphics/TranslatingaBufferedImage.htm
+   *
+   * @param image
+   * @param x
+   * @param y
+   * @return
+   */
+  public BufferedImage translateTransform(BufferedImage image, double x, double y) {
+    BufferedImage result = new BufferedImage(image.getHeight(), image.getWidth(), image.getType());
+
+    AffineTransform tx = new AffineTransform();
+    tx.translate(x, y);
+
+    AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+    op.filter(image, result);
+
+    return result;
+  }
+
   public int[][] unionTransform(int[][] matrix1, int[][] matrix2) {
     int[][] resultPixelArray = new int[matrix1.length][matrix1.length];
 
@@ -617,7 +751,12 @@ public class Agent {
 
     for (int i = 0; i < matrix1.length; i++) {
       for (int j = 0; j < matrix1[i].length; j++) {
-        resultPixelArray[i][j] = matrix1[i][j] - matrix2[i][j];
+        int value = matrix1[i][j] - matrix2[i][j];
+
+        if (value < 0)
+          resultPixelArray[i][j] = 0;
+        else
+          resultPixelArray[i][j] = value;
       }
     }
 
@@ -629,7 +768,12 @@ public class Agent {
 
     for (int i = 0; i < matrix1.length; i++) {
       for (int j = 0; j < matrix1[i].length; j++) {
-        resultPixelArray[i][j] = matrix2[i][j] - matrix1[i][j];
+        int value = matrix2[i][j] - matrix1[i][j];
+
+        if (value < 0)
+          resultPixelArray[i][j] = 0;
+        else
+          resultPixelArray[i][j] = value;
       }
     }
 
@@ -648,9 +792,7 @@ public class Agent {
     return resultPixelArray;
   }
 
-  public double calculateTverskyRatio(int[][] matrix1, int[][] matrix2) {
-    double alpha = 2.0;
-    double beta = 1.0;
+  public double calculateTverskyRatio(int[][] matrix1, int[][] matrix2, double alpha, double beta) {
     double intersection = intersectMatrices(matrix1, matrix2);
     double difference = differenceMatrices(matrix1, matrix2);
     double difference2 = differenceMatrices(matrix2, matrix1);
@@ -667,7 +809,7 @@ public class Agent {
 
     for (int i = 0; i < matrix1.length; i++) {
       for (int j = 0; j < matrix1[i].length; j++) {
-        if (matrix1[i][j] == 0 || matrix2[i][j] == 0)
+        if (matrix1[i][j] == 1 || matrix2[i][j] == 1)
           count++;
       }
     }
@@ -680,7 +822,7 @@ public class Agent {
 
     for (int i = 0; i < matrix1.length; i++) {
       for (int j = 0; j < matrix1[i].length; j++) {
-        if (matrix1[i][j] == 0 && matrix2[i][j] == 0)
+        if (matrix1[i][j] == 1 && matrix2[i][j] == 1)
           count++;
       }
     }
@@ -693,13 +835,55 @@ public class Agent {
 
     for (int i = 0; i < matrix1.length; i++) {
       for (int j = 0; j < matrix1[i].length; j++) {
-        if (matrix1[i][j] == 0 && matrix2[i][j] == 255)
+        if (matrix1[i][j] == 1 && matrix2[i][j] == 0)
           count++;
       }
     }
 
     return count;
   }
+
+  public int[][] differenceMatrices2(int[][] matrix1, int[][] matrix2) {
+    int[][] result = new int[matrix1.length][matrix1.length];
+
+    for (int i = 0; i < matrix1.length; i++) {
+      for (int j = 0; j < matrix1[i].length; j++) {
+        if (matrix1[i][j] == 1 && matrix2[i][j] == 0)
+          result[i][j] = 1;
+        else
+          result[i][j] = 0;
+      }
+    }
+
+    return result;
+  }
+
+  public int[][] imageAddition(int[][] pixelMatrix1, int[][] pixelMatrix2) {
+    int[][] result = pixelMatrix1;
+
+    for (int i = 0; i < pixelMatrix1.length; i++) {
+      for (int j = 0; j < pixelMatrix1[i].length; j++) {
+        if (pixelMatrix2[i][j] == 1)
+          result[i][j] = 1;
+      }
+    }
+
+    return result;
+  }
+
+  public int[][] imageSubtraction(int[][] pixelMatrix1, int[][] pixelMatrix2) {
+    int[][] result = pixelMatrix1;
+
+    for (int i = 0; i < pixelMatrix1.length; i++) {
+      for (int j = 0; j < pixelMatrix1[i].length; j++) {
+        if (pixelMatrix2[i][j] == 1)
+          result[i][j] = 0;
+      }
+    }
+
+    return result;
+  }
+
 
   /**
    * This method opens an image from a file.
@@ -749,7 +933,52 @@ public class Agent {
     Raster raster = image.getData();
     for (int i = 0; i < width; i++) {
       for (int j = 0; j < height; j++) {
-        matrix[i][j] = raster.getSample(i, j, 0);
+        int value = raster.getSample(i, j, 0);
+
+        // Map gray/black to 1 and white to 0
+        if (value == 255)
+          matrix[i][j] = 0;
+        else
+          matrix[i][j] = 1;
+      }
+    }
+
+    return matrix;
+  }
+
+  // TODO remove after testing
+  public BufferedImage getImage(int pixels[][], SampleModel sampleModel)
+  {
+    int w=pixels.length;
+    int h=pixels[0].length;
+    WritableRaster raster= Raster.createWritableRaster(sampleModel, new Point(0,0));
+    for(int i=0;i<w;i++)
+    {
+      for(int j=0;j<h;j++)
+      {
+        raster.setSample(i,j,0,pixels[i][j]);
+      }
+    }
+
+    BufferedImage image=new BufferedImage(w,h,BufferedImage.TYPE_BYTE_GRAY);
+    image.setData(raster);
+
+    return image;
+  }
+
+  // TODO remove after testing
+  public int[][] convertGrayscalePixelMatrix(int[][] pixelMatrix) {
+    int[][] matrix = new int[pixelMatrix.length][pixelMatrix.length];
+
+    for (int i = 0; i < pixelMatrix.length; i++) {
+      for (int j = 0; j < pixelMatrix.length; j++) {
+        int value = pixelMatrix[i][j];
+
+        // Map gray/black to 0 and white to 255
+        if (value == 0)
+          matrix[i][j] = 255;
+        else
+          matrix[i][j] = 0;
       }
     }
 
