@@ -1,9 +1,9 @@
 Set,Correct,Incorrect,Skipped
 Basic Problems B,0,0,12
 Challenge Problems B,0,0,12
-Basic Problems C,2,10,0
-Challenge Problems C,1,11,0
-Basic Problems D,5,7,0
-Challenge Problems D,4,8,0
-Basic Problems E,5,7,0
-Challenge Problems E,1,11,0
+Basic Problems C,4,8,0
+Challenge Problems C,3,9,0
+Basic Problems D,9,3,0
+Challenge Problems D,2,10,0
+Basic Problems E,10,2,0
+Challenge Problems E,4,8,0
