@@ -234,7 +234,15 @@ public class Agent {
 //    else
 //      answer = unaryAnswerSelection(partialAnalogyPairs, finalUnaryTransform, images, answerImages);
 
-    answer = binaryAnswerSelection2(partialAnalogyTriplets, finalBinaryTransform2, images, answerImages);
+    if (problem.getName().startsWith("Basic Problem E")
+        || problem.getName().startsWith("Challenge Problem E")
+        || problem.getName().startsWith("Basic Problem C")
+        || problem.getName().startsWith("Challenge Problem C")) {
+      answer = binaryAnswerSelection2(partialAnalogyTriplets, finalBinaryTransform2, images, answerImages);
+    }
+    else {
+      answer = unaryAnswerSelection2(partialAnalogyPairs, finalUnaryTransform2, images, answerImages);
+    }
 
     System.out.println(answer);
 
