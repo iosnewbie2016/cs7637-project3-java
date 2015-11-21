@@ -9,6 +9,7 @@ public class SimiltudeTransform {
   private String transform;
   private Pair<Integer, Integer> translation;
   private String compositionOperand;
+  private Double similarityRatio;
   private int[][] compositionResult;
 
   public SimiltudeTransform(
@@ -16,12 +17,12 @@ public class SimiltudeTransform {
       String transform,
       Pair<Integer, Integer> translation,
       String compositionOperand,
-      int[][] compositionResult) {
+      Double similarityRatio) {
     this.analogyKey = analogyKey;
     this.transform = transform;
     this.translation = translation;
     this.compositionOperand = compositionOperand;
-    this.compositionResult = compositionResult;
+    this.similarityRatio = similarityRatio;
   }
 
   public Integer getAnalogyKey() {
@@ -40,7 +41,15 @@ public class SimiltudeTransform {
     return compositionOperand;
   }
 
+  public Double getSimilarityRatio() {
+    return similarityRatio;
+  }
+
   public int[][] getCompositionResult() {
     return compositionResult;
+  }
+
+  public void setCompositionResult(int[][] compositionResult) {
+    this.compositionResult = compositionResult;
   }
 }
