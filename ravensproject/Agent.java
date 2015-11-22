@@ -65,8 +65,6 @@ public class Agent {
    * @return your Agent's answer to this problem
    */
   public int Solve(RavensProblem problem) {
-    theProblem = problem;
-
     if (problem.getProblemType().equals("3x3"))
       return initialization(problem);
     else
