@@ -73,6 +73,12 @@ public class Agent {
       return -1;
   }
 
+  /**
+   * This method finds the best answer for a given problem.
+   *
+   * @param problem
+   * @return
+   */
   public int initialization(RavensProblem problem) {
     System.out.println(problem.getName());
     Map<String, BufferedImage> images = new HashMap<>();
@@ -243,11 +249,18 @@ public class Agent {
         answer = Integer.valueOf(binaryTransformAnswer.getKey());
     }
 
-    System.out.println(answer);
+    System.out.println("Answer: " + answer);
 
     return answer;
   }
 
+  /**
+   * This method finds the best binary transform for a problem.
+   *
+   * @param completedAnalogyTriplets
+   * @param images
+   * @return
+   */
   public SimiltudeTransform binaryTransformationInduction(
       Map<Integer, List<String>> completedAnalogyTriplets,
       Map<String, BufferedImage> images) {
@@ -351,6 +364,13 @@ public class Agent {
     return similtudeTransform;
   }
 
+  /**
+   * This method finds the best unary transform for a problem.
+   *
+   * @param completedAnalogyPairs
+   * @param images
+   * @return
+   */
   public SimiltudeTransform unaryTransformationInduction(
       Map<Integer, Pair<String, String>> completedAnalogyPairs,
       Map<String, BufferedImage> images) {
@@ -470,6 +490,15 @@ public class Agent {
     return similtudeTransform;
   }
 
+  /**
+   * This method selects the best answer given a unary transform.
+   *
+   * @param partialAnalogyPairs
+   * @param finalUnaryTransform
+   * @param images
+   * @param answerImages
+   * @return
+   */
   public Map.Entry<String, Double> unaryAnswerSelection(
       Map<Integer, Pair<String, String>> partialAnalogyPairs,
       SimiltudeTransform finalUnaryTransform,
@@ -533,6 +562,15 @@ public class Agent {
     return answer;
   }
 
+  /**
+   * This method selects the best answer given a binary transform.
+   *
+   * @param partialAnalogyTriplets
+   * @param finalBinaryTransform
+   * @param images
+   * @param answerImages
+   * @return
+   */
   public Map.Entry<String, Double> binaryAnswerSelection(
       Map<Integer, List<String>> partialAnalogyTriplets,
       SimiltudeTransform finalBinaryTransform,
@@ -582,7 +620,13 @@ public class Agent {
     return answer;
   }
 
-
+  /**
+   * This method finds the best translation between two images.
+   *
+   * @param transformedImage
+   * @param pixelMatrix2
+   * @return
+   */
   public Pair<Double, Pair<Integer, Integer>> getBestTranslation(BufferedImage transformedImage, int[][] pixelMatrix2) {
     // Find best translation for transform
     double maxTversky = 0;
@@ -748,6 +792,13 @@ public class Agent {
     return result;
   }
 
+  /**
+   * This method performs union transform on two matrices.
+   *
+   * @param matrix1
+   * @param matrix2
+   * @return
+   */
   public int[][] unionTransform(int[][] matrix1, int[][] matrix2) {
     int[][] resultPixelArray = new int[matrix1.length][matrix1.length];
 
@@ -760,6 +811,13 @@ public class Agent {
     return resultPixelArray;
   }
 
+  /**
+   * This method performs intersect binary transform on two matrices.
+   *
+   * @param matrix1
+   * @param matrix2
+   * @return
+   */
   public int[][] intersectTransform(int[][] matrix1, int[][] matrix2) {
     int[][] resultPixelArray = new int[matrix1.length][matrix1.length];
 
@@ -772,6 +830,13 @@ public class Agent {
     return resultPixelArray;
   }
 
+  /**
+   * This method performs subtract binary transform on two matrices.
+   *
+   * @param matrix1
+   * @param matrix2
+   * @return
+   */
   public int[][] subtractTransform(int[][] matrix1, int[][] matrix2) {
     int[][] resultPixelArray = new int[matrix1.length][matrix1.length];
 
@@ -789,6 +854,13 @@ public class Agent {
     return resultPixelArray;
   }
 
+  /**
+   * This method performs back subtract binary transform on two matrices.
+   *
+   * @param matrix1
+   * @param matrix2
+   * @return
+   */
   public int[][] backSubtractTransform(int[][] matrix1, int[][] matrix2) {
     int[][] resultPixelArray = new int[matrix1.length][matrix1.length];
 
@@ -806,6 +878,13 @@ public class Agent {
     return resultPixelArray;
   }
 
+  /**
+   * This method performs exclusive or binary transform on two matrices.
+   *
+   * @param matrix1
+   * @param matrix2
+   * @return
+   */
   public int[][] exclusiveOrTransform(int[][] matrix1, int[][] matrix2) {
     int[][] resultPixelArray = new int[matrix1.length][matrix1.length];
 
@@ -818,6 +897,13 @@ public class Agent {
     return resultPixelArray;
   }
 
+  /**
+   * This method find image composition operator between two matrices.
+   *
+   * @param matrix1
+   * @param matrix2
+   * @return
+   */
   public String findImageComposition(int[][] matrix1, int[][] matrix2) {
     Map<String, Double> compositions = new HashMap<>();
 
@@ -836,6 +922,13 @@ public class Agent {
     return bestComposition.getKey();
   }
 
+  /**
+   * This method performs image composition based on operator.
+   *
+   * @param matrix1
+   * @param matrix2
+   * @return
+   */
   public int[][] performImageComposition(int[][] matrix1, int[][] matrix2, String operand) {
     int[][] compositionResult;
     int[][] result = new int[matrix1.length][matrix1.length];
@@ -853,6 +946,13 @@ public class Agent {
     return result;
   }
 
+  /**
+   * This method calculates tversky ratio between two matrices.
+   *
+   * @param matrix1
+   * @param matrix2
+   * @return
+   */
   public double calculateTverskyRatio(int[][] matrix1, int[][] matrix2, double alpha, double beta) {
     double intersection = intersectMatrices(matrix1, matrix2);
     double difference = differenceMatrices(matrix1, matrix2);
@@ -865,6 +965,13 @@ public class Agent {
     return (double) intersectMatrices(matrix1, matrix2) / unionMatrices(matrix1, matrix2);
   }
 
+  /**
+   * This method performs set union on two matrices.
+   *
+   * @param matrix1
+   * @param matrix2
+   * @return
+   */
   public int unionMatrices(int[][] matrix1, int[][] matrix2) {
     int count = 0;
 
@@ -878,6 +985,13 @@ public class Agent {
     return count;
   }
 
+  /**
+   * This method performs set intersect on two matrices.
+   *
+   * @param matrix1
+   * @param matrix2
+   * @return
+   */
   public int intersectMatrices(int[][] matrix1, int[][] matrix2) {
     int count = 0;
 
@@ -891,6 +1005,13 @@ public class Agent {
     return count;
   }
 
+  /**
+   * This method performs set difference on two matrices.
+   *
+   * @param matrix1
+   * @param matrix2
+   * @return
+   */
   public int differenceMatrices(int[][] matrix1, int[][] matrix2) {
     int count = 0;
 
@@ -904,6 +1025,13 @@ public class Agent {
     return count;
   }
 
+  /**
+   * This method performs set difference on two matrices.
+   *
+   * @param matrix1
+   * @param matrix2
+   * @return
+   */
   public int[][] differenceMatrices2(int[][] matrix1, int[][] matrix2) {
     int[][] result = new int[matrix1.length][matrix1.length];
 
@@ -919,6 +1047,13 @@ public class Agent {
     return result;
   }
 
+  /**
+   * This method performs set addition on two matrices.
+   *
+   * @param pixelMatrix1
+   * @param pixelMatrix2
+   * @return
+   */
   public int[][] imageAddition(int[][] pixelMatrix1, int[][] pixelMatrix2) {
     int[][] result = cloneMatrix(pixelMatrix1);
 
@@ -932,6 +1067,13 @@ public class Agent {
     return result;
   }
 
+  /**
+   * This method performs set difference on two matrices.
+   *
+   * @param pixelMatrix1
+   * @param pixelMatrix2
+   * @return
+   */
   public int[][] imageSubtraction(int[][] pixelMatrix1, int[][] pixelMatrix2) {
     int[][] result = cloneMatrix(pixelMatrix1);
 
@@ -1028,7 +1170,6 @@ public class Agent {
     return copy;
   }
 
-  // TODO remove after testing
   /**
    * This method saves an image to a file.
    *
@@ -1045,7 +1186,13 @@ public class Agent {
     }
   }
 
-  // TODO remove after testing
+  /**
+   * This method returns an image from a grayscale pixel matrix.
+   *
+   * @param pixels
+   * @param sampleModel
+   * @return
+   */
   public BufferedImage getImage(int pixels[][], SampleModel sampleModel)
   {
     int w=pixels.length;
@@ -1065,7 +1212,12 @@ public class Agent {
     return image;
   }
 
-  // TODO remove after testing
+  /**
+   * This method returns a grayscale pixel matrix from a matrix of 1s and 0s.
+   *
+   * @param pixelMatrix
+   * @return
+   */
   public int[][] convertGrayscalePixelMatrix(int[][] pixelMatrix) {
     int[][] matrix = new int[pixelMatrix.length][pixelMatrix.length];
 
